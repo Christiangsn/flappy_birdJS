@@ -39,6 +39,15 @@ const flappyBird = {
     height: 24,
     x: 10,
     y: 50,
+    gravity: 0.25,
+    speed: 0,
+
+    currentPosition () {
+        flappyBird.speed = flappyBird.speed + flappyBird.gravity;
+        flappyBird.y = flappyBird.y + flappyBird.speed;
+
+    },
+
 
     init(){
         ctx.drawImage(
@@ -51,6 +60,59 @@ const flappyBird = {
         );
     }
 
+}
+
+const mesagemGetReady = {
+    spriteX: 134,
+    spriteY: 0,
+    width: 174,
+    height: 152,
+    x: (canvas.width / 2 ) - 174 / 2,
+    y: 58,
+
+    start() {
+        ctx.drawImage(
+            sprites,
+            mesagemGetReady.spriteX, mesagemGetReady.spriteY, 
+            mesagemGetReady.width, mesagemGetReady.height, 
+            mesagemGetReady.x, mesagemGetReady.y,
+            mesagemGetReady.width, mesagemGetReady.height,
+        )
+    }
+}
+
+let current = {}
+function changeStage (newStage) {
+    current = newStage
+}
+
+const stage = {
+    START: {
+        startGame() {
+            background.init();
+            floor.init();
+            flappyBird.init();
+            mesagemGetReady.start();
+        },
+        click () {
+            changeStage(stage.GAME)
+        },
+        updateGame() {
+
+        }
+    }
+
+}
+
+stage.GAME ={
+    startGame() {
+        background.init();
+        floor.init();
+        flappyBird.init();
+    },
+    updateGame() {
+        flappyBird.currentPosition();
+    }
 }
 
 const background = {
@@ -84,11 +146,19 @@ const background = {
 }
 
 function loop() {
-    background.init();
-    floor.init();
-    flappyBird.init();
-    requestAnimationFrame(loop);
+    current.startGame();
+    current.updateGame();
 
+    requestAnimationFrame(loop);
+    
 }
 
+window.addEventListener('click', () => {
+    if (current.click) {
+        current.click();
+    }
+
+})
+
+changeStage(stage.START);
 loop();
