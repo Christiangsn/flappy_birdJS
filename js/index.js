@@ -1,3 +1,6 @@
+const hit = new Audio();
+hit.src = '../effekte/hit.wav';
+
 const sprites = new Image();
 sprites.src = '../images/sprites.png';
 
@@ -32,35 +35,69 @@ const floor = {
 
 }
 
-const flappyBird = { 
-    spriteX: 0,
-    spriteY: 0,
-    width: 33,
-    height: 24,
-    x: 10,
-    y: 50,
-    gravity: 0.25,
-    speed: 0,
-
-    currentPosition () {
-        flappyBird.speed = flappyBird.speed + flappyBird.gravity;
-        flappyBird.y = flappyBird.y + flappyBird.speed;
-
-    },
-
-
-    init(){
-        ctx.drawImage(
-            sprites, 
-            flappyBird.spriteX, flappyBird.spriteY, 
-            flappyBird.width, flappyBird.height, 
-            flappyBird.x, flappyBird.y,
-            flappyBird.width, flappyBird.height,
-
-        );
+function meeting(flappyBird, floor) {
+    const flappyBirdY = flappyBird.y + flappyBird.height;
+    const floorY = floor.y;
+    
+    if (flappyBirdY >= floorY) {
+        return true;
     }
 
+    return false
+
 }
+
+function newFlappyBird () {
+    const flappyBird = { 
+        spriteX: 0,
+        spriteY: 0,
+        width: 33,
+        height: 24,
+        x: 10,
+        y: 50,
+        gravity: 0.25,
+        speed: 0,
+        flappyUp: 4.6,
+    
+        up () {
+            flappyBird.speed = - flappyBird.flappyUp
+        },
+    
+        currentPosition () {
+            if (meeting(flappyBird, floor)) {
+                console.log('teste')
+                hit.play();
+
+                setTimeout ( () => {
+                    changeStage(stage.START)
+                }, 500)
+                return;
+
+            }
+    
+            flappyBird.speed = flappyBird.speed + flappyBird.gravity;
+            flappyBird.y = flappyBird.y + flappyBird.speed;
+    
+        },
+    
+    
+        init(){
+            ctx.drawImage(
+                sprites, 
+                flappyBird.spriteX, flappyBird.spriteY, 
+                flappyBird.width, flappyBird.height, 
+                flappyBird.x, flappyBird.y,
+                flappyBird.width, flappyBird.height,
+    
+            );
+        }
+    
+    }
+
+    return flappyBird;
+}
+
+
 
 const mesagemGetReady = {
     spriteX: 134,
@@ -81,17 +118,26 @@ const mesagemGetReady = {
     }
 }
 
-let current = {}
+const globais = {};
+let current = {};
 function changeStage (newStage) {
-    current = newStage
+    current = newStage;
+
+    if(current.begin) {
+        current.begin();
+    }
+
 }
 
 const stage = {
     START: {
+        begin() {
+            globais.flappyBird = newFlappyBird();
+        },
         startGame() {
             background.init();
             floor.init();
-            flappyBird.init();
+            globais.flappyBird.init();
             mesagemGetReady.start();
         },
         click () {
@@ -108,10 +154,13 @@ stage.GAME ={
     startGame() {
         background.init();
         floor.init();
-        flappyBird.init();
+        globais.flappyBird.init();
+    },
+    keyUp () {
+        globais.flappyBird.up();
     },
     updateGame() {
-        flappyBird.currentPosition();
+        globais.flappyBird.currentPosition();
     }
 }
 
@@ -153,12 +202,22 @@ function loop() {
     
 }
 
+const keysDown = {};
+window.addEventListener('keydown', (e) => {
+    keysDown[e.keyCode] = true;
+
+    if (38 in keysDown) {
+        current.keyUp();
+    }
+});
+
 window.addEventListener('click', () => {
     if (current.click) {
-        current.click();
-    }
+      current.click();
+    }  
 
 })
 
 changeStage(stage.START);
 loop();
+
