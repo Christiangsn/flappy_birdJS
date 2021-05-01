@@ -7,33 +7,45 @@ sprites.src = '../images/sprites.png';
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
-const floor = {
-    spriteX: 0,
-    spriteY: 610,
-    width: 224,
-    height: 300,
-    x: 0,
-    y: canvas.height - 112,
+function newFloor () {
+    const floor = {
+        spriteX: 0,
+        spriteY: 610,
+        width: 224,
+        height: 400,
+        x: 400,
+        y: canvas.height - 112,
 
-    init(){
-        ctx.drawImage(
-            sprites, 
-            floor.spriteX, floor.spriteY, 
-            floor.width, floor.height, 
-            floor.x, floor.y,
-            floor.width, floor.height, 
-        ),
-        ctx.drawImage(
-            sprites, 
-            floor.spriteX, floor.spriteY, 
-            floor.width, floor.height, 
-            (floor.x + floor.width), floor.y,
-            floor.width, floor.height, 
-        );
-    },
- 
+        lopping () {
+            const move = 1;
+            // const repeat = floor.width % 99.9  RESOLVER MAIS TARDE
+            const repeat = floor.width / floor.width
+            const drive = floor.x - move;
+            floor.x = drive % repeat;
 
+        },
+    
+        init(){
+            ctx.drawImage(
+                sprites, 
+                floor.spriteX, floor.spriteY, 
+                floor.width, floor.height, 
+                floor.x, floor.y,
+                floor.width, floor.height, 
+            ),
+            ctx.drawImage(
+                sprites, 
+                floor.spriteX, floor.spriteY, 
+                floor.width, floor.height, 
+                (floor.x + floor.width), floor.y,
+                floor.width, floor.height, 
+            );
+        },
+    }
+
+    return floor
 }
+
 
 function meeting(flappyBird, floor) {
     const flappyBirdY = flappyBird.y + flappyBird.height;
@@ -49,12 +61,13 @@ function meeting(flappyBird, floor) {
 
 function newFlappyBird () {
     const flappyBird = { 
-        spriteX: 0,
-        spriteY: 0,
-        width: 33,
-        height: 24,
+
+        spriteX: 0, 
+        spriteY: 0, 
+        width: 33, 
+        height: 24, 
         x: 10,
-        y: 50,
+        y: 50,           
         gravity: 0.25,
         speed: 0,
         flappyUp: 4.6,
@@ -64,27 +77,35 @@ function newFlappyBird () {
         },
     
         currentPosition () {
-            if (meeting(flappyBird, floor)) {
-                console.log('teste')
+            if (meeting(flappyBird, globais.floor)) {
                 hit.play();
 
                 setTimeout ( () => {
                     changeStage(stage.START)
                 }, 500)
                 return;
-
             }
-    
             flappyBird.speed = flappyBird.speed + flappyBird.gravity;
             flappyBird.y = flappyBird.y + flappyBird.speed;
     
         },
-    
+
+        moviment: [
+            { spriteX: 0,  spriteY: 0 },
+            { spriteX: 0,  spriteY: 26 },
+            { spriteX: 0,  spriteY: 52 }
+        ],
+
+        frame: 0,
+        currentFrame (){
+
+        },
     
         init(){
+            const { spriteX, spriteY } = flappyBird.moviment[flappyBird.frame];
             ctx.drawImage(
                 sprites, 
-                flappyBird.spriteX, flappyBird.spriteY, 
+                spriteX, spriteY, 
                 flappyBird.width, flappyBird.height, 
                 flappyBird.x, flappyBird.y,
                 flappyBird.width, flappyBird.height,
@@ -133,10 +154,11 @@ const stage = {
     START: {
         begin() {
             globais.flappyBird = newFlappyBird();
+            globais.floor = newFloor();
         },
         startGame() {
             background.init();
-            floor.init();
+            globais.floor.init();
             globais.flappyBird.init();
             mesagemGetReady.start();
         },
@@ -144,7 +166,7 @@ const stage = {
             changeStage(stage.GAME)
         },
         updateGame() {
-
+            globais.floor.lopping();
         }
     }
 
@@ -153,7 +175,7 @@ const stage = {
 stage.GAME ={
     startGame() {
         background.init();
-        floor.init();
+        globais.floor.init();
         globais.flappyBird.init();
     },
     keyUp () {
