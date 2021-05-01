@@ -1,3 +1,4 @@
+let frames = 0;
 const hit = new Audio();
 hit.src = '../effekte/hit.wav';
 
@@ -98,10 +99,21 @@ function newFlappyBird () {
 
         frame: 0,
         currentFrame (){
+            const intervalFrame = 10;
+            const interval = frames % intervalFrame === 0;
+
+
+            if (interval) { 
+                const baseIncrement = 1;
+                const increment = baseIncrement + flappyBird.frame;
+                const baseRepaeat = flappyBird.moviment.length;
+                flappyBird.frame = increment % baseRepaeat;
+            }
 
         },
     
         init(){
+            flappyBird.currentFrame();
             const { spriteX, spriteY } = flappyBird.moviment[flappyBird.frame];
             ctx.drawImage(
                 sprites, 
@@ -118,7 +130,85 @@ function newFlappyBird () {
     return flappyBird;
 }
 
+function newObstacles () {
+    const obstacles = {
+        width: 52,
+        height: 400,
+        floor: {
+            spriteX: 0,
+            spriteY: 169
+        },
+        sky: {
+            spriteX: 52,
+            spriteY: 169,
+        },
+        clear: 80,
+        init() {
+            obstacles.pairs.forEach(par => {
+                const yRandom = par.y
+                const spacing = 40;
+                const obstacleSkyX = par.x;
+                const obstacleSkyY = yRandom;
+                
+                ctx.drawImage (
+                    sprites,
+                    obstacles.sky.spriteX, obstacles.sky.spriteY,
+                    obstacles.width, obstacles.height,
+                    obstacleSkyX, obstacleSkyY,
+                    obstacles.width, obstacles.height
+                )
+    
+                const obstacleFloorX = par.x;
+                const obstacleFloorY = obstacles.height + spacing + yRandom;
+    
+                ctx.drawImage (
+                    sprites,
+                    obstacles.floor.spriteX, obstacles.floor.spriteY,
+                    obstacles.width, obstacles.height,
+                    obstacleFloorX, obstacleFloorY,
+                    obstacles.width, obstacles.height
+                )           
+            });
+            
+        },
+        collision(par) {
 
+            if(globais.flappyBird.x >= par.x){
+                console.log('testando')
+
+            }
+
+            return false
+        },
+        pairs: [],        
+        update() {
+            const nextFrame = frames % 100 === 0;
+            
+            if(nextFrame) {
+                obstacles.pairs.push({
+                    x: canvas.width,
+                    y: -150 * [Math.random() + 1]
+                })
+            }
+
+            obstacles.pairs.forEach(par => {
+                par.x = par.x - 2;
+
+                if(obstacles.collision(par)){
+
+                }
+
+                if(par.x + obstacles.height <= 0) {
+                    obstacles.pairs.shift();
+                }
+
+            })
+
+        }
+    }
+    return obstacles;
+
+}
 
 const mesagemGetReady = {
     spriteX: 134,
@@ -155,18 +245,21 @@ const stage = {
         begin() {
             globais.flappyBird = newFlappyBird();
             globais.floor = newFloor();
+            globais.obstacles = newObstacles();
         },
         startGame() {
             background.init();
-            globais.floor.init();
             globais.flappyBird.init();
-            mesagemGetReady.start();
+            globais.obstacles.init();
+            globais.floor.init();
+            // mesagemGetReady.start();
         },
         click () {
             changeStage(stage.GAME)
         },
         updateGame() {
             globais.floor.lopping();
+            globais.obstacles.update();
         }
     }
 
@@ -219,7 +312,7 @@ const background = {
 function loop() {
     current.startGame();
     current.updateGame();
-
+    frames = frames +1;
     requestAnimationFrame(loop);
     
 }
