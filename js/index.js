@@ -167,14 +167,32 @@ function newObstacles () {
                     obstacles.width, obstacles.height,
                     obstacleFloorX, obstacleFloorY,
                     obstacles.width, obstacles.height
-                )           
+                ) 
+                
+                par.obstacleSky = {
+                    x: obstacleFloorX,
+                    y: obstacles.height + obstacleSkyY
+                }
+                par.obstacleFloor = {
+                    x: obstacleFloorX,
+                    y: obstacleFloorY
+                }
             });
             
         },
         collision(par) {
+            const flappyHeart = globais.flappyBird.y;
+            const flappyBase =  globais.flappyBird.y + globais.flappyBird.height;
 
             if(globais.flappyBird.x >= par.x){
-                console.log('testando')
+  
+                if (flappyHeart <= par.obstacleSky.y) {
+                    return true
+                }
+
+                if (flappyBase >= par.obstacleFloor.y) {
+                    return true;
+                }
 
             }
 
@@ -195,7 +213,7 @@ function newObstacles () {
                 par.x = par.x - 2;
 
                 if(obstacles.collision(par)){
-
+                    changeStage(stage.START)
                 }
 
                 if(par.x + obstacles.height <= 0) {
@@ -252,14 +270,13 @@ const stage = {
             globais.flappyBird.init();
             globais.obstacles.init();
             globais.floor.init();
-            // mesagemGetReady.start();
+            mesagemGetReady.start();
         },
         click () {
             changeStage(stage.GAME)
         },
         updateGame() {
             globais.floor.lopping();
-            globais.obstacles.update();
         }
     }
 
@@ -268,6 +285,7 @@ const stage = {
 stage.GAME ={
     startGame() {
         background.init();
+        globais.obstacles.init();
         globais.floor.init();
         globais.flappyBird.init();
     },
@@ -275,6 +293,8 @@ stage.GAME ={
         globais.flappyBird.up();
     },
     updateGame() {
+        globais.obstacles.update();
+        globais.floor.lopping();
         globais.flappyBird.currentPosition();
     }
 }
