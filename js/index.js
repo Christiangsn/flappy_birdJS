@@ -80,10 +80,7 @@ function newFlappyBird () {
         currentPosition () {
             if (meeting(flappyBird, globais.floor)) {
                 hit.play();
-
-                setTimeout ( () => {
-                    changeStage(stage.START)
-                }, 500)
+                changeStage(stage.GAME_OVER)
                 return;
             }
             flappyBird.speed = flappyBird.speed + flappyBird.gravity;
@@ -184,7 +181,7 @@ function newObstacles () {
             const flappyHeart = globais.flappyBird.y;
             const flappyBase =  globais.flappyBird.y + globais.flappyBird.height;
 
-            if(globais.flappyBird.x >= par.x){
+            if((globais.flappyBird.x + globais.flappyBird.height ) >= par.x){
   
                 if (flappyHeart <= par.obstacleSky.y) {
                     return true
@@ -213,7 +210,8 @@ function newObstacles () {
                 par.x = par.x - 2;
 
                 if(obstacles.collision(par)){
-                    changeStage(stage.START)
+                    hit.play();
+                    changeStage(stage.GAME_OVER)
                 }
 
                 if(par.x + obstacles.height <= 0) {
@@ -225,6 +223,31 @@ function newObstacles () {
         }
     }
     return obstacles;
+
+}
+
+function gameScore() {
+    const score = {
+        point: 0,
+
+        init () {
+            ctx.font = '35px "VT323" ';
+            ctx.textAlign = 'right';
+            ctx.fillStyle = 'white';
+            ctx.fillText(`${score.point}`, canvas.width - 10, 35);
+
+        },
+        update () {
+            const intervalFrame = 10;
+            const interval = frames % intervalFrame === 0;
+
+            if (interval){
+                score.point = score.point +1;
+            }
+        }
+    }
+
+    return score
 
 }
 
@@ -243,6 +266,25 @@ const mesagemGetReady = {
             mesagemGetReady.width, mesagemGetReady.height, 
             mesagemGetReady.x, mesagemGetReady.y,
             mesagemGetReady.width, mesagemGetReady.height,
+        )
+    }
+}
+
+const messageGameOver = {
+    sX: 134,
+    sY: 153,
+    width: 226,
+    height: 200,
+    x: (canvas.width / 2 ) - 226 / 2,
+    y: 50,
+
+    init() {
+        ctx.drawImage(
+            sprites,
+            messageGameOver.sX, messageGameOver.sY, 
+            messageGameOver.width, messageGameOver.height, 
+            messageGameOver.x, messageGameOver.y,
+            messageGameOver.width, messageGameOver.height,
         )
     }
 }
@@ -282,12 +324,17 @@ const stage = {
 
 }
 
-stage.GAME ={
+stage.GAME = {
+    begin() {
+        globais.score = gameScore();
+
+    },
     startGame() {
         background.init();
         globais.obstacles.init();
         globais.floor.init();
         globais.flappyBird.init();
+        globais.score.init();
     },
     keyUp () {
         globais.flappyBird.up();
@@ -296,6 +343,19 @@ stage.GAME ={
         globais.obstacles.update();
         globais.floor.lopping();
         globais.flappyBird.currentPosition();
+        globais.score.update();
+    }
+}
+
+stage.GAME_OVER = {
+    startGame () {
+        messageGameOver.init();
+    },
+    click () {
+
+    },
+    updateGame() {
+        changeStage(stage.GAME_OVER)
     }
 }
 
