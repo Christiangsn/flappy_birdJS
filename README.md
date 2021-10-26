@@ -35,4 +35,3 @@ Follow screenshots, and good gaming :)
 
 ## Note
 - After downloading the repository, just go to the flappybird.html file and drag it to a tab in your browser
-- 
