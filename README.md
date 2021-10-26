@@ -24,6 +24,7 @@ Its architecture was made in html and css, using canvas, very good for creating 
 ## Documentation
 
 Only a browser is required to simulate the game!
+<b>After downloading the repository, just go to the flappybird.html file and drag it to a tab in your browser</b>
 Well, come on, do a clone of this repository. Then, navigate to the folder where it was cloned (or if you have a code editor with integrated terminal, just open it) and type:
 
 Follow screenshots, and good gaming :)
@@ -32,4 +33,7 @@ Follow screenshots, and good gaming :)
 </div>
 
 
-<a href="#-Note">Note</a>
+
+## Note
+- After downloading the repository, just go to the flappybird.html file and drag it to a tab in your browser
+- 
