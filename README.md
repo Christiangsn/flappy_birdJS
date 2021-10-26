@@ -4,7 +4,7 @@
   <a href="#-Technology">Technology</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#-Project">Project</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#-Project">Documentation</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-Note">Note</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-Note">Note</a>
 </p>
 
 ## 🚀 Technology
@@ -28,7 +28,8 @@ Well, come on, do a clone of this repository. Then, navigate to the folder where
 
 Follow screenshots, and good gaming :)
 <div align="center">
- <img style="margin: 10px" src="http://imgroots.com/images/2021/10/25/fb1.png" alt="game1" height="3=600" />  
- <img style="margin: 10px" src="https://i.imgur.com/GsWr5gA.png" alt="game2" height="300" />
- <img style="margin: 10px" src="http://imgroots.com/images/2021/10/25/FB3.png" alt="game3" height="300" />
+ <img style="margin: 10px" src="http://imgroots.com/images/2021/10/26/flappybird.png" alt="game1" height="500" />  
 </div>
+
+
+<a href="#-Note">Note</a>
